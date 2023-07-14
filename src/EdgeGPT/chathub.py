@@ -269,3 +269,4 @@ class ChatHub:
 
     async def close(self) -> None:
         await self.session.aclose()
+        # await self.aio_session.close()
