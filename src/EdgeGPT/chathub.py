@@ -144,26 +144,26 @@ class ChatHub:
                     continue
                 response = json.loads(obj)
                 # print(response)
-                if response.get("type") == 1 and response["arguments"][0].get(
-                    "messages",
-                ):
-                    if not draw:
-                        if (
-                            response["arguments"][0]["messages"][0].get(
-                                "messageType",
-                            )
-                            == "GenerateContentQuery"
+                        if response.get("type") == 1 and response["arguments"][0].get(
+                            "messages",
                         ):
-                            try:
-                                async with ImageGenAsync(
-                                    all_cookies=self.cookies,
-                                ) as image_generator:
-                                    images = await image_generator.get_images(
-                                        response["arguments"][0]["messages"][0]["text"],
+                            if not draw:
+                                if (
+                                    response["arguments"][0]["messages"][0].get(
+                                        "messageType",
                                     )
-                                for i, image in enumerate(images):
-                                    resp_txt = f"{resp_txt}\n![image{i}]({image})"
-                                draw = True
+                                    == "GenerateContentQuery"
+                                ):
+                            try:
+                                    async with ImageGenAsync(
+                                        all_cookies=self.cookies,
+                                    ) as image_generator:
+                                        images = await image_generator.get_images(
+                                            response["arguments"][0]["messages"][0]["text"],
+                                        )
+                                    for i, image in enumerate(images):
+                                        resp_txt = f"{resp_txt}\n![image{i}]({image})"
+                                    draw = True
                             except Exception as e:
                                 print(e)
                                 continue
