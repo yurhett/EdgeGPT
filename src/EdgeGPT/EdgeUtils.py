@@ -6,8 +6,7 @@ from pathlib import Path
 
 from log2d import Log
 
-from .EdgeGPT import Chatbot
-from .EdgeGPT import ConversationStyle
+from .EdgeGPT import Chatbot, ConversationStyle
 from .ImageGen import ImageGen
 
 Log("BingChat")
@@ -148,7 +147,7 @@ class Query:
                     if isinstance(x, (str, Path)) and x
                 }
                 Cookie.supplied_files = cookie_files
-            files = Cookie.files()  # includes .supplied_files
+            Cookie.files()  # includes .supplied_files
             if Cookie.rotate_cookies:
                 Cookie.import_next()
             else:
@@ -348,7 +347,7 @@ def test_cookie_rotation() -> None:
         log(f"Cookie count: {Cookie.request_count.get(Cookie.current_file_path.name)}")
 
 
-def test_features() -> Query:
+def test_features(i) -> Query:
     try:
         q = Query(
             f"What is {i} in Roman numerals?  Give the answer in JSON",

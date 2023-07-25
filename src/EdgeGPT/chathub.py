@@ -4,24 +4,18 @@ import os
 import ssl
 import sys
 from time import time
-from typing import Generator
-from typing import List
-from typing import Union
+from typing import Generator, List, Union
 
 import aiohttp
 import certifi
 import httpx
 from BingImageCreator import ImageGenAsync
 
-from .constants import DELIMITER
-from .constants import HEADERS
-from .constants import HEADERS_INIT_CONVER
+from .constants import DELIMITER, HEADERS, HEADERS_INIT_CONVER
 from .conversation import Conversation
 from .conversation_style import CONVERSATION_STYLE_TYPE
 from .request import ChatHubRequest
-from .utilities import append_identifier
-from .utilities import get_ran_hex
-from .utilities import guess_locale
+from .utilities import append_identifier, get_ran_hex, guess_locale
 
 ssl_context = ssl.create_default_context()
 ssl_context.load_verify_locations(certifi.where())
@@ -106,8 +100,6 @@ class ChatHub:
         # Check if websocket is closed
         wss = await self.aio_session.ws_connect(
             wss_link or "wss://sydney.bing.com/sydney/ChatHub",
-            extra_headers=req_header,
-            max_size=None,
             ssl=ssl_context,
             headers=HEADERS,
             proxy=self.proxy,
@@ -146,7 +138,7 @@ class ChatHub:
                     continue
                 response = json.loads(obj)
                 # print(response)
-                        if response.get("type") == 1 and response["arguments"][0].get(
+                if response.get("type") == 1 and response["arguments"][0].get(
                             "messages",
                         ):
                             if not draw:
@@ -156,52 +148,52 @@ class ChatHub:
                                     )
                                     == "GenerateContentQuery"
                                 ):
-                            try:
-                                    async with ImageGenAsync(
-                                        all_cookies=self.cookies,
-                                    ) as image_generator:
-                                        images = await image_generator.get_images(
-                                            response["arguments"][0]["messages"][0]["text"],
-                                        )
-                                    for i, image in enumerate(images):
-                                        resp_txt = f"{resp_txt}\n![image{i}]({image})"
-                                    draw = True
-                            except Exception as e:
-                                print(e)
-                                continue
-                        if (
-                            (
-                                response["arguments"][0]["messages"][0]["contentOrigin"]
-                                != "Apology"
-                            )
-                            and not draw
-                            and not raw
-                        ):
-                            resp_txt = result_text + response["arguments"][0][
-                                "messages"
-                            ][0]["adaptiveCards"][0]["body"][0].get("text", "")
-                            resp_txt_no_link = result_text + response["arguments"][0][
-                                "messages"
-                            ][0].get("text", "")
-                            if response["arguments"][0]["messages"][0].get(
-                                "messageType",
-                            ):
-                                resp_txt = (
-                                    resp_txt
-                                    + response["arguments"][0]["messages"][0][
-                                        "adaptiveCards"
-                                    ][0]["body"][0]["inlines"][0].get("text")
-                                    + "\n"
+                                    try:
+                                        async with ImageGenAsync(
+                                            all_cookies=self.cookies,
+                                        ) as image_generator:
+                                            images = await image_generator.get_images(
+                                                response["arguments"][0]["messages"][0]["text"],
+                                            )
+                                        for i, image in enumerate(images):
+                                            resp_txt = f"{resp_txt}\n![image{i}]({image})"
+                                        draw = True
+                                    except Exception as e:
+                                        print(e)
+                                        continue
+                                if (
+                                (
+                                    response["arguments"][0]["messages"][0]["contentOrigin"]
+                                    != "Apology"
                                 )
-                                result_text = (
-                                    result_text
-                                    + response["arguments"][0]["messages"][0][
-                                        "adaptiveCards"
-                                    ][0]["body"][0]["inlines"][0].get("text")
-                                    + "\n"
-                                )
-                        if not raw:
-                            yield False, resp_txt
+                                and not draw
+                                and not raw
+                                ):
+                                    resp_txt = result_text + response["arguments"][0][
+                                        "messages"
+                                    ][0]["adaptiveCards"][0]["body"][0].get("text", "")
+                                    resp_txt_no_link = result_text + response["arguments"][0][
+                                        "messages"
+                                    ][0].get("text", "")
+                                if response["arguments"][0]["messages"][0].get(
+                                    "messageType",
+                                ):
+                                    resp_txt = (
+                                        resp_txt
+                                        + response["arguments"][0]["messages"][0][
+                                            "adaptiveCards"
+                                        ][0]["body"][0]["inlines"][0].get("text")
+                                        + "\n"
+                                    )
+                                    result_text = (
+                                        result_text
+                                        + response["arguments"][0]["messages"][0][
+                                            "adaptiveCards"
+                                        ][0]["body"][0]["inlines"][0].get("text")
+                                        + "\n"
+                                    )
+                            if not raw:
+                                yield False, resp_txt
 
                 elif response.get("type") == 2:
                     if response["item"]["result"].get("error"):
