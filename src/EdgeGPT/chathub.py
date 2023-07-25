@@ -106,6 +106,8 @@ class ChatHub:
         # Check if websocket is closed
         wss = await self.aio_session.ws_connect(
             wss_link or "wss://sydney.bing.com/sydney/ChatHub",
+            extra_headers=req_header,
+            max_size=None,
             ssl=ssl_context,
             headers=HEADERS,
             proxy=self.proxy,
