@@ -103,6 +103,7 @@ class ChatHub:
             ssl=ssl_context,
             headers=HEADERS,
             proxy=self.proxy,
+            timeout=30.0,
         )
         await self._initial_handshake(wss)
         # Construct a ChatHub request
@@ -137,8 +138,8 @@ class ChatHub:
                 if obj is None or not obj:
                     continue
                 response = json.loads(obj)
-                # print(response)
-                if response.get("type") == 1 and response["arguments"][0].get(
+                try:
+                    if response.get("type") == 1 and response["arguments"][0].get(
                             "messages",
                         ):
                             if not draw:
@@ -195,43 +196,48 @@ class ChatHub:
                             if not raw:
                                 yield False, resp_txt
 
-                elif response.get("type") == 2:
-                    if response["item"]["result"].get("error"):
-                        await self.close()
-                        raise Exception(
-                            f"{response['item']['result']['value']}: {response['item']['result']['message']}",
-                        )
-                    if draw:
-                        cache = response["item"]["messages"][1]["adaptiveCards"][0][
-                            "body"
-                        ][0]["text"]
-                        response["item"]["messages"][1]["adaptiveCards"][0]["body"][0][
-                            "text"
-                        ] = (cache + resp_txt)
-                    if (
-                        response["item"]["messages"][-1]["contentOrigin"] == "Apology"
-                        and resp_txt
-                    ):
-                        response["item"]["messages"][-1]["text"] = resp_txt_no_link
-                        response["item"]["messages"][-1]["adaptiveCards"][0]["body"][0][
-                            "text"
-                        ] = resp_txt
-                        print(
-                            "Preserved the message from being deleted",
-                            file=sys.stderr,
-                        )
-                    await wss.close()
-                    if not self.aio_session.closed:
-                        await self.aio_session.close()
-                    yield True, response
-                    return
-                if response.get("type") != 2:
-                    if response.get("type") == 6:
-                        await wss.send_str(append_identifier({"type": 6}))
-                    elif response.get("type") == 7:
-                        await wss.send_str(append_identifier({"type": 7}))
-                    elif raw:
-                        yield False, response
+                    elif response.get("type") == 2:
+                        if response["item"]["result"].get("error"):
+                            await self.close()
+                            raise Exception(
+                                f"{response['item']['result']['value']}: {response['item']['result']['message']}",
+                            )
+                        if draw:
+                            cache = response["item"]["messages"][1]["adaptiveCards"][0][
+                                "body"
+                            ][0]["text"]
+                            response["item"]["messages"][1]["adaptiveCards"][0]["body"][0][
+                                "text"
+                            ] = (cache + resp_txt)
+                        if (
+                            response["item"]["messages"][-1]["contentOrigin"] == "Apology"
+                            and resp_txt
+                        ):
+                            response["item"]["messages"][-1]["text"] = resp_txt_no_link
+                            response["item"]["messages"][-1]["adaptiveCards"][0]["body"][0][
+                                "text"
+                            ] = resp_txt
+                            print(
+                                "Preserved the message from being deleted",
+                                file=sys.stderr,
+                            )
+                        await wss.close()
+                        if not self.aio_session.closed:
+                            await self.aio_session.close()
+                        yield True, response
+                        return
+                    if response.get("type") != 2:
+                        if response.get("type") == 6:
+                            await wss.send_str(append_identifier({"type": 6}))
+                        elif response.get("type") == 7:
+                            await wss.send_str(append_identifier({"type": 7}))
+                        elif raw:
+                            yield False, response
+                except Exception as e:
+                    print(e)
+                    print(response)
+                    continue
+            
 
     async def _initial_handshake(self, wss) -> None:
         await wss.send_str(append_identifier({"protocol": "json", "version": 1}))
