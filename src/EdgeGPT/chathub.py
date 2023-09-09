@@ -5,6 +5,7 @@ import ssl
 import sys
 from time import time
 from typing import Generator, List, Union
+from urllib.parse import quote
 
 import aiohttp
 import certifi
@@ -15,7 +16,7 @@ from .constants import DELIMITER, HEADERS, HEADERS_INIT_CONVER
 from .conversation import Conversation
 from .conversation_style import CONVERSATION_STYLE_TYPE
 from .request import ChatHubRequest
-from .utilities import append_identifier, get_ran_hex, guess_locale
+from .utilities import append_identifier, guess_locale
 
 ssl_context = ssl.create_default_context()
 ssl_context.load_verify_locations(certifi.where())
@@ -55,21 +56,6 @@ class ChatHub:
             headers=HEADERS_INIT_CONVER,
         )
 
-    async def get_conversation(
-        self,
-        conversation_id: str = None,
-        conversation_signature: str = None,
-        client_id: str = None,
-    ) -> dict:
-        conversation_id = conversation_id or self.request.conversation_id
-        conversation_signature = (
-            conversation_signature or self.request.conversation_signature
-        )
-        client_id = client_id or self.request.client_id
-        url = f"https://sydney.bing.com/sydney/GetConversation?conversationId={conversation_id}&source=cib&participantId={client_id}&conversationSignature={conversation_signature}&traceId={get_ran_hex()}"
-        response = await self.session.get(url)
-        return response.json()
-
     async def get_activity(self) -> dict:
         url = "https://www.bing.com/turing/conversation/chats"
         headers = HEADERS_INIT_CONVER.copy()
@@ -84,7 +70,6 @@ class ChatHub:
     async def ask_stream(
         self,
         prompt: str,
-        wss_link: str = None,
         conversation_style: CONVERSATION_STYLE_TYPE = None,
         raw: bool = False,
         webpage_context: Union[str, None] = None,
@@ -98,8 +83,9 @@ class ChatHub:
                 cookies[cookie["name"]] = cookie["value"]
         self.aio_session = aiohttp.ClientSession(cookies=cookies)
         # Check if websocket is closed
+        token = quote(self.request.conversation_signature)
         wss = await self.aio_session.ws_connect(
-            wss_link or "wss://sydney.bing.com/sydney/ChatHub",
+            f"wss://sydney.bing.com/sydney/ChatHub?sec_access_token={token}",
             ssl=ssl_context,
             headers=HEADERS,
             proxy=self.proxy,

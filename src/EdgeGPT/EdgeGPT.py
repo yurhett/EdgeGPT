@@ -92,7 +92,6 @@ class Chatbot:
     async def ask(
         self,
         prompt: str,
-        wss_link: str = "wss://sydney.bing.com/sydney/ChatHub",
         conversation_style: CONVERSATION_STYLE_TYPE = None,
         webpage_context: str | None = None,
         search_result: bool = False,
@@ -115,7 +114,6 @@ class Chatbot:
         async for final, response in self.chat_hub.ask_stream(
             prompt=prompt,
             conversation_style=conversation_style,
-            wss_link=wss_link,
             webpage_context=webpage_context,
             search_result=search_result,
             locale=locale,
@@ -173,7 +171,6 @@ class Chatbot:
     async def ask_stream(
         self,
         prompt: str,
-        wss_link: str = "wss://sydney.bing.com/sydney/ChatHub",
         conversation_style: CONVERSATION_STYLE_TYPE = None,
         raw: bool = False,
         webpage_context: str | None = None,
