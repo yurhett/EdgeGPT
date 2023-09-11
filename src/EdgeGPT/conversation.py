@@ -91,7 +91,8 @@ class Conversation:
         if cookies:
             formatted_cookies = httpx.Cookies()
             for cookie in cookies:
-                formatted_cookies.set(cookie["name"], cookie["value"])
+                if cookie["name"] in ["_U", "SUID"]:
+                    formatted_cookies.set(cookie["name"], cookie["value"])
         async with httpx.AsyncClient(
             proxies=proxy,
             timeout=30,
@@ -112,11 +113,11 @@ class Conversation:
             raise Exception("Authentication failed")
         try:
             self.struct = response.json()
-            self.struct["conversationSignature"] = response.headers["X-Sydney-Encryptedconversationsignature"]
         except (json.decoder.JSONDecodeError, NotAllowedToAccess) as exc:
             raise Exception(
                 "Authentication failed. You have not been accepted into the beta.",
             ) from exc
         if self.struct["result"]["value"] == "UnauthorizedRequest":
-            raise NotAllowedToAccess(self.struct["result"]["message"])
+            print(self.struct)
+            raise NotAllowedToAccess(self.struct["result"]["value"])
         return self

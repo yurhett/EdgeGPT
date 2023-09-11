@@ -5,7 +5,6 @@ import ssl
 import sys
 from time import time
 from typing import Generator, List, Union
-from urllib.parse import quote
 
 import aiohttp
 import certifi
@@ -83,9 +82,8 @@ class ChatHub:
                 cookies[cookie["name"]] = cookie["value"]
         self.aio_session = aiohttp.ClientSession(cookies=cookies)
         # Check if websocket is closed
-        token = quote(self.request.conversation_signature)
         wss = await self.aio_session.ws_connect(
-            f"wss://sydney.bing.com/sydney/ChatHub?sec_access_token={token}",
+            "wss://sydney.bing.com/sydney/ChatHub",
             ssl=ssl_context,
             headers=HEADERS,
             proxy=self.proxy,
@@ -126,61 +124,65 @@ class ChatHub:
                 response = json.loads(obj)
                 try:
                     if response.get("type") == 1 and response["arguments"][0].get(
-                            "messages",
-                        ):
-                            if not draw:
-                                if (
-                                    response["arguments"][0]["messages"][0].get(
-                                        "messageType",
-                                    )
-                                    == "GenerateContentQuery"
-                                ):
-                                    try:
-                                        async with ImageGenAsync(
-                                            all_cookies=self.cookies,
-                                        ) as image_generator:
-                                            images = await image_generator.get_images(
-                                                response["arguments"][0]["messages"][0]["text"],
-                                            )
-                                        for i, image in enumerate(images):
-                                            resp_txt = f"{resp_txt}\n![image{i}]({image})"
-                                        draw = True
-                                    except Exception as e:
-                                        print(e)
-                                        continue
-                                if (
+                        "messages",
+                    ):
+                        if not draw:
+                            if (
+                                response["arguments"][0]["messages"][0].get(
+                                    "messageType",
+                                )
+                                == "GenerateContentQuery"
+                            ):
+                                try:
+                                    async with ImageGenAsync(
+                                        all_cookies=self.cookies,
+                                    ) as image_generator:
+                                        images = await image_generator.get_images(
+                                            response["arguments"][0]["messages"][0][
+                                                "text"
+                                            ],
+                                        )
+                                    for i, image in enumerate(images):
+                                        resp_txt = f"{resp_txt}\n![image{i}]({image})"
+                                    draw = True
+                                except Exception as e:
+                                    print(e)
+                                    continue
+                            if (
                                 (
-                                    response["arguments"][0]["messages"][0]["contentOrigin"]
+                                    response["arguments"][0]["messages"][0][
+                                        "contentOrigin"
+                                    ]
                                     != "Apology"
                                 )
                                 and not draw
                                 and not raw
-                                ):
-                                    resp_txt = result_text + response["arguments"][0][
-                                        "messages"
-                                    ][0]["adaptiveCards"][0]["body"][0].get("text", "")
-                                    resp_txt_no_link = result_text + response["arguments"][0][
-                                        "messages"
-                                    ][0].get("text", "")
-                                if response["arguments"][0]["messages"][0].get(
-                                    "messageType",
-                                ):
-                                    resp_txt = (
-                                        resp_txt
-                                        + response["arguments"][0]["messages"][0][
-                                            "adaptiveCards"
-                                        ][0]["body"][0]["inlines"][0].get("text")
-                                        + "\n"
-                                    )
-                                    result_text = (
-                                        result_text
-                                        + response["arguments"][0]["messages"][0][
-                                            "adaptiveCards"
-                                        ][0]["body"][0]["inlines"][0].get("text")
-                                        + "\n"
-                                    )
-                            if not raw:
-                                yield False, resp_txt
+                            ):
+                                resp_txt = result_text + response["arguments"][0][
+                                    "messages"
+                                ][0]["adaptiveCards"][0]["body"][0].get("text", "")
+                                resp_txt_no_link = result_text + response["arguments"][
+                                    0
+                                ]["messages"][0].get("text", "")
+                            if response["arguments"][0]["messages"][0].get(
+                                "messageType",
+                            ):
+                                resp_txt = (
+                                    resp_txt
+                                    + response["arguments"][0]["messages"][0][
+                                        "adaptiveCards"
+                                    ][0]["body"][0]["inlines"][0].get("text")
+                                    + "\n"
+                                )
+                                result_text = (
+                                    result_text
+                                    + response["arguments"][0]["messages"][0][
+                                        "adaptiveCards"
+                                    ][0]["body"][0]["inlines"][0].get("text")
+                                    + "\n"
+                                )
+                        if not raw:
+                            yield False, resp_txt
 
                     elif response.get("type") == 2:
                         if response["item"]["result"].get("error"):
@@ -192,17 +194,18 @@ class ChatHub:
                             cache = response["item"]["messages"][1]["adaptiveCards"][0][
                                 "body"
                             ][0]["text"]
-                            response["item"]["messages"][1]["adaptiveCards"][0]["body"][0][
-                                "text"
-                            ] = (cache + resp_txt)
+                            response["item"]["messages"][1]["adaptiveCards"][0]["body"][
+                                0
+                            ]["text"] = (cache + resp_txt)
                         if (
-                            response["item"]["messages"][-1]["contentOrigin"] == "Apology"
+                            response["item"]["messages"][-1]["contentOrigin"]
+                            == "Apology"
                             and resp_txt
                         ):
                             response["item"]["messages"][-1]["text"] = resp_txt_no_link
-                            response["item"]["messages"][-1]["adaptiveCards"][0]["body"][0][
-                                "text"
-                            ] = resp_txt
+                            response["item"]["messages"][-1]["adaptiveCards"][0][
+                                "body"
+                            ][0]["text"] = resp_txt
                             print(
                                 "Preserved the message from being deleted",
                                 file=sys.stderr,
@@ -223,7 +226,6 @@ class ChatHub:
                     print(e)
                     print(response)
                     continue
-            
 
     async def _initial_handshake(self, wss) -> None:
         await wss.send_str(append_identifier({"protocol": "json", "version": 1}))
