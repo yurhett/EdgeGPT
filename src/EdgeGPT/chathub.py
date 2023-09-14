@@ -70,6 +70,7 @@ class ChatHub:
     async def ask_stream(
         self,
         prompt: str,
+        wss_link: str = None,
         conversation_style: CONVERSATION_STYLE_TYPE = None,
         raw: bool = False,
         webpage_context: Union[str, None] = None,
@@ -84,7 +85,7 @@ class ChatHub:
         self.aio_session = aiohttp.ClientSession(cookies=cookies)
         # Check if websocket is closed
         wss = await self.aio_session.ws_connect(
-            "wss://sydney.bing.com/sydney/ChatHub",
+            wss_link or "wss://sydney.bing.com/sydney/ChatHub",
             ssl=ssl_context,
             headers=HEADERS,
             proxy=self.proxy,
