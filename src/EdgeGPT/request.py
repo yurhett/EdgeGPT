@@ -4,7 +4,7 @@ from typing import Union
 
 from .conversation_style import CONVERSATION_STYLE_TYPE
 from .conversation_style import ConversationStyle
-from .utilities import get_location_hint_from_locale
+from .utilities import get_location_hint_from_locale, get_location_from_locale
 from .utilities import get_ran_hex
 from .utilities import guess_locale
 
@@ -82,7 +82,7 @@ class ChatHubRequest:
                     "locale": locale,
                     "market": locale,
                     "region": locale[-2:],
-                    "location": get_location_hint_from_locale(locale),
+                    "location": get_location_from_locale(locale),
                     "locationHints": get_location_hint_from_locale(locale),
                     "userIpAddress": ipaddress,
                     "timestamp": timestamp,
