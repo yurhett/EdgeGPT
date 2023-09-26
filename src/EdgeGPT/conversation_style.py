@@ -35,19 +35,25 @@ class ConversationStyle(Enum):
         "dv3sugg",
         "autosave",
     ]
-    precise = [
-        "nlu_direct_response_filter",
-        "deepleo",
-        "disable_emoji_spoken_text",
-        "responsible_ai_policy_235",
-        "enablemm",
-        "h3precise",
-        "objopinion",
-        "dsblhlthcrd",
-        "dv3sugg",
-        "autosave",
-        "clgalileo",
-        "gencontentv3",
+    precise = ["nlu_direct_response_filter",
+               "deepleo",
+               "disable_emoji_spoken_text",
+               "responsible_ai_policy_235",
+               "enablemm",
+               "dv3sugg",
+               "autosave",
+               "iyxapbing",
+               "iycapbing",
+               "h3precise",
+               "gcccomp",
+               "agicert",
+               "iyjbexp",
+               "izusrprmpt",
+               "eredirecturl",
+               "clgalileo",
+               "gencontentv3",
+               "fluxhint",
+               "fluxv13"
     ]
 
 

@@ -18,7 +18,6 @@ class ChatHubRequest:
         invocation_id: int = 3,
     ) -> None:
         self.struct: dict = {}
-
         self.client_id: str = client_id
         self.conversation_id: str = conversation_id
         self.conversation_signature: str = conversation_signature
@@ -27,6 +26,7 @@ class ChatHubRequest:
     def update(
         self,
         prompt: str,
+        ipaddress: str,
         conversation_style: CONVERSATION_STYLE_TYPE,
         webpage_context: Union[str, None] = None,
         search_result: bool = False,
@@ -62,76 +62,48 @@ class ChatHubRequest:
         # Get current time
         timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S") + offset_string
         self.struct = {
-            "arguments": [
-                {
-                    "source": "cib",
-                    "optionsSets": options,
-                    "allowedMessageTypes": [
-                        "ActionRequest",
-                        "Chat",
-                        "Context",
-                        "InternalSearchQuery",
-                        "InternalSearchResult",
-                        "Disengaged",
-                        "InternalLoaderMessage",
-                        "Progress",
-                        "RenderCardRequest",
-                        "AdsQuery",
-                        "SemanticSerp",
-                        "GenerateContentQuery",
-                        "SearchQuery",
-                    ],
-                    "sliceIds": [
-                        "winmuid1tf",
-                        "styleoff",
-                        "ccadesk",
-                        "smsrpsuppv4cf",
-                        "ssrrcache",
-                        "contansperf",
-                        "crchatrev",
-                        "winstmsg2tf",
-                        "creatgoglt",
-                        "creatorv2t",
-                        "sydconfigoptt",
-                        "adssqovroff",
-                        "530pstho",
-                        "517opinion",
-                        "418dhlth",
-                        "512sprtic1s0",
-                        "emsgpr",
-                        "525ptrcps0",
-                        "529rweas0",
-                        "515oscfing2s0",
-                        "524vidansgs0",
-                    ],
-                    "verbosity": "verbose",
-                    "traceId": get_ran_hex(32),
-                    "isStartOfSession": self.invocation_id == 3,
-                    "message": {
-                        "locale": locale,
-                        "market": locale,
-                        "region": locale[-2:],  # en-US -> US
-                        "locationHints": get_location_hint_from_locale(locale),
-                        "timestamp": timestamp,
-                        "author": "user",
-                        "inputMethod": "Keyboard",
-                        "text": prompt,
-                        "messageType": "Chat",
-                        "messageId": message_id,
-                        "requestId": message_id,
-                    },
-                    "tone": conversation_style.name.capitalize(),  # Make first letter uppercase
+            "arguments": [{
+                "source": "cib",
+                "optionsSets": options,
+                "allowedMessageTypes": ["ActionRequest", "Chat", "Context", "InternalSearchQuery",
+                                        "InternalSearchResult", "Disengaged", "InternalLoaderMessage", "Progress",
+                                        "RenderCardRequest", "AdsQuery", "SemanticSerp", "GenerateContentQuery",
+                                        "SearchQuery"],
+                "sliceIds": ["gbacf", "divkorbl2p", "emovoicecf", "tts3cf", "crtrgxnew", "inochatv2", "wrapnoins",
+                             "norbingchrome", "sydconfigoptc", "178gentechs0", "824fluxhi52s0", "0825agicert",
+                             "0901usrprmpt", "821fluxv13hint", "727nrprdrs0"],
+                "verbosity": "verbose",
+                "scenario": "SERP",
+                "plugins": [],
+                "traceId": get_ran_hex(32),
+                "isStartOfSession": self.invocation_id == 3,
+                "requestId": message_id,
+                "message": {
+                    "locale": locale,
+                    "market": locale,
+                    "region": locale[-2:],
+                    "location": get_location_hint_from_locale(locale),
+                    "locationHints": get_location_hint_from_locale(locale),
+                    "userIpAddress": ipaddress,
+                    "timestamp": timestamp,
+                    "author": "user",
+                    "inputMethod": "Keyboard",
+                    "text": prompt,
+                    "messageType": "Chat",
                     "requestId": message_id,
-                    "conversationSignature": self.conversation_signature,
-                    "participant": {
-                        "id": self.client_id,
-                    },
-                    "conversationId": self.conversation_id,
+                    "messageId": message_id
                 },
-            ],
-            "invocationId": str(self.invocation_id),
+                "tone": conversation_style.name.capitalize(),
+                "conversationSignature": self.conversation_signature,
+                "participant": {
+                    "id": self.client_id,
+                },
+                "spokenTextMode": "None",
+                "conversationId": self.conversation_id
+            }],
+            "invocationId": self.invocation_id,
             "target": "chat",
-            "type": 4,
+            "type": 4
         }
         if search_result:
             have_search_result = [

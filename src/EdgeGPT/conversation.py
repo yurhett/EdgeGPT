@@ -61,6 +61,8 @@ class Conversation:
             ) from exc
         if self.struct["result"]["value"] == "UnauthorizedRequest":
             raise NotAllowedToAccess(self.struct["result"]["message"])
+        if 'X-Sydney-Encryptedconversationsignature' in response.headers:
+            self.struct['sec_access_token'] = response.headers['X-Sydney-Encryptedconversationsignature']
 
     @staticmethod
     async def create(

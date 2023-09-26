@@ -90,10 +90,13 @@ class ChatHub:
             proxy=self.proxy,
             timeout=30.0,
         )
+        # Get IP in cookies
+        ipaddress = cookies.get("BingAI_Rand_IP")
         await self._initial_handshake(wss)
         # Construct a ChatHub request
         self.request.update(
             prompt=prompt,
+            ipaddress=ipaddress,
             conversation_style=conversation_style,
             webpage_context=webpage_context,
             search_result=search_result,
