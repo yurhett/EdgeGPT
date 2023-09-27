@@ -54,6 +54,7 @@ class ChatHub:
             proxies=proxy,
             timeout=900,
             headers=HEADERS_INIT_CONVER,
+            verify=False,
         )
 
     async def get_activity(self) -> dict:
