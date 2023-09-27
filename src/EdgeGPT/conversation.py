@@ -102,6 +102,7 @@ class Conversation:
             headers=HEADERS_INIT_CONVER,
             transport=transport,
             cookies=formatted_cookies,
+            verify=False,
         ) as client:
             # Send GET request
             response = await client.get(
