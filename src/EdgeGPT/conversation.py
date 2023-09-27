@@ -35,6 +35,7 @@ class Conversation:
         if proxy is not None and proxy.startswith("socks5h://"):
             proxy = "socks5://" + proxy[len("socks5h://") :]
         self.session = httpx.Client(
+            verify=False,
             proxies=proxy,
             timeout=900,
             headers=HEADERS_INIT_CONVER,
