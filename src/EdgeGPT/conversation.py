@@ -94,8 +94,9 @@ class Conversation:
         if cookies:
             formatted_cookies = httpx.Cookies()
             for cookie in cookies:
-                if cookie["name"] in ["_U", "SUID"]:
-                    formatted_cookies.set(cookie["name"], cookie["value"])
+                # Fix: Use full cookies not only _U and SUID
+                # if cookie["name"] in ["_U", "SUID"]:
+                formatted_cookies.set(cookie["name"], cookie["value"])
         async with httpx.AsyncClient(
             proxies=proxy,
             timeout=30,
