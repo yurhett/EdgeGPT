@@ -35,7 +35,7 @@ class Conversation:
         if proxy is not None and proxy.startswith("socks5h://"):
             proxy = "socks5://" + proxy[len("socks5h://") :]
         self.session = httpx.Client(
-            # verify=False,
+            verify=False,
             proxies=proxy,
             timeout=900,
             headers=HEADERS_INIT_CONVER,
@@ -103,7 +103,7 @@ class Conversation:
             headers=HEADERS_INIT_CONVER,
             transport=transport,
             cookies=formatted_cookies,
-            # verify=False,
+            verify=False,
         ) as client:
             # Send GET request
             response = await client.get(
