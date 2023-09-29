@@ -1,3 +1,4 @@
+import random
 import uuid
 from datetime import datetime
 from typing import Union
@@ -11,11 +12,11 @@ from .utilities import guess_locale
 
 class ChatHubRequest:
     def __init__(
-        self,
-        conversation_signature: str,
-        client_id: str,
-        conversation_id: str,
-        invocation_id: int = 3,
+            self,
+            conversation_signature: str,
+            client_id: str,
+            conversation_id: str,
+            invocation_id: int = 3,
     ) -> None:
         self.struct: dict = {}
         self.client_id: str = client_id
@@ -24,13 +25,13 @@ class ChatHubRequest:
         self.invocation_id: int = invocation_id
 
     def update(
-        self,
-        prompt: str,
-        ipaddress: str,
-        conversation_style: CONVERSATION_STYLE_TYPE,
-        webpage_context: Union[str, None] = None,
-        search_result: bool = False,
-        locale: str = guess_locale(),
+            self,
+            prompt: str,
+            ipaddress: str,
+            conversation_style: CONVERSATION_STYLE_TYPE,
+            webpage_context: Union[str, None] = None,
+            search_result: bool = False,
+            locale: str = guess_locale(),
     ) -> None:
         options = [
             "deepleo",
@@ -65,13 +66,38 @@ class ChatHubRequest:
             "arguments": [{
                 "source": "cib",
                 "optionsSets": options,
-                "allowedMessageTypes": ["ActionRequest", "Chat", "Context", "InternalSearchQuery",
-                                        "InternalSearchResult", "Disengaged", "InternalLoaderMessage", "Progress",
-                                        "RenderCardRequest", "AdsQuery", "SemanticSerp", "GenerateContentQuery",
-                                        "SearchQuery"],
-                "sliceIds": ["gbacf", "divkorbl2p", "emovoicecf", "tts3cf", "crtrgxnew", "inochatv2", "wrapnoins",
-                             "norbingchrome", "sydconfigoptc", "178gentechs0", "824fluxhi52s0", "0825agicert",
-                             "0901usrprmpt", "821fluxv13hint", "727nrprdrs0"],
+                "allowedMessageTypes": [
+                    "ActionRequest",
+                    "Chat",
+                    "Context",
+                    "InternalSearchQuery",
+                    "InternalSearchResult",
+                    "Disengaged",
+                    "InternalLoaderMessage",
+                    "Progress",
+                    "RenderCardRequest",
+                    "AdsQuery",
+                    "SemanticSerp",
+                    "GenerateContentQuery",
+                    "SearchQuery"
+                ],
+                "sliceIds": [
+                    "gbacf",
+                    "divkorbl2p",
+                    "emovoicecf",
+                    "tts3cf",
+                    "crtrgxnew",
+                    "inochatv2",
+                    "wrapnoins",
+                    "norbingchrome",
+                    "sydconfigoptc",
+                    "178gentechs0",
+                    "824fluxhi52s0",
+                    "0825agicert",
+                    "0901usrprmpt",
+                    "821fluxv13hint",
+                    "727nrprdrs0"
+                ],
                 "verbosity": "verbose",
                 "scenario": "SERP",
                 "plugins": [],
@@ -79,12 +105,12 @@ class ChatHubRequest:
                 "isStartOfSession": self.invocation_id == 3,
                 "requestId": message_id,
                 "message": {
-                    "locale": locale,
+                    "locale": guess_locale(),
                     "market": locale,
                     "region": locale[-2:],
                     "location": get_location_from_locale(locale),
                     "locationHints": get_location_hint_from_locale(locale),
-                    "userIpAddress": ipaddress,
+                    "userIpAddress": random.choice([ipaddress, None]),
                     "timestamp": timestamp,
                     "author": "user",
                     "inputMethod": "Keyboard",
