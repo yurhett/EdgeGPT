@@ -29,17 +29,12 @@ def get_location_hint_from_locale(locale: str) -> Union[dict, None]:
         hint = LocationHint.USA.value
     return hint.get("LocationHint")
 
+
 def get_location_from_locale(locale: str) -> Union[dict, None]:
-    locale = locale.lower()
-    if locale == "en-gb":
-        pass
-    elif locale == "en-ie":
-        pass
-    elif locale == "zh-cn":
-        pass
-    else:
-        hint = Location.USA.value
-    return hint.get("Location")
+    assert locale.lower() == "en-us"
+    hint = Location.USA.value
+    return hint
+
 
 def guess_locale() -> str:
     if sys.platform.startswith("win"):
