@@ -54,7 +54,7 @@ class ChatHub:
             proxies=proxy,
             timeout=900,
             headers=HEADERS_INIT_CONVER,
-            verify=False,
+            # verify=False,
         )
 
     async def get_activity(self) -> dict:
@@ -87,8 +87,8 @@ class ChatHub:
         # Check if websocket is closed
         wss = await self.aio_session.ws_connect(
             wss_link or "wss://sydney.bing.com/sydney/ChatHub",
-            # ssl=ssl_context,
-            verify_ssl=False,
+            ssl=ssl_context,
+            # verify_ssl=False,
             headers=HEADERS,
             proxy=self.proxy,
             timeout=30.0,
