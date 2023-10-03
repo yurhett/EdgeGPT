@@ -127,7 +127,7 @@ class ChatHubRequest:
                 "spokenTextMode": "None",
                 "conversationId": self.conversation_id
             }],
-            "invocationId": self.invocation_id,
+            "invocationId": str(self.invocation_id),
             "target": "chat",
             "type": 4
         }
