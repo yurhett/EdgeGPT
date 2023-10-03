@@ -1,4 +1,4 @@
-> # This project has been archived. Due to personal circumstances, I lack the time to maintain this repository.
+> # This fork is only for personal use. No support will be provided.
 
 <div align="center">
   <img src="https://socialify.git.ci/acheong08/EdgeGPT/image?font=Inter&language=1&logo=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F9%2F9c%2FBing_Fluent_Logo.svg&owner=1&pattern=Floating%20Cogs&theme=Auto" alt="EdgeGPT" width="640" height="320" />
@@ -35,7 +35,7 @@ _The reverse engineering the chat feature of the new version of Bing_
 ## Install package
 
 ```bash
-python3 -m pip install EdgeGPT --upgrade
+pip uninstall edgegpt -y && pip install git+https://ghproxy.com/github.com/yurhett/EdgeGPT.git
 ```
 
 ## Requirements
