@@ -5,3 +5,4 @@ httpx
 prompt_toolkit
 requests
 rich
+pytz

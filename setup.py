@@ -28,6 +28,7 @@ setup(
         ],
     },
     install_requires=[
+        "pytz",
         "httpx[socks]>=0.24.0",
         "aiohttp",
         "websockets",

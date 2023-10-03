@@ -1,4 +1,5 @@
 import random
+import time
 import uuid
 from datetime import datetime
 from typing import Union
@@ -44,22 +45,26 @@ class ChatHubRequest:
                 conversation_style = getattr(ConversationStyle, conversation_style)
             options = conversation_style.value
         message_id = str(uuid.uuid4())
-        # Get the current local time
-        now_local = datetime.now()
+        # 获取当前时间戳（秒）
+        ts = time.time()
 
-        # Get the current UTC time
-        now_utc = datetime.utcnow()
+        # 获取本地时间和UTC时间的datetime对象
+        local_dt = time.localtime(ts)
+        utc_dt = time.gmtime(ts)
 
-        # Calculate the time difference between local and UTC time
-        timezone_offset = now_local - now_utc
+        # 计算本地时间和UTC时间的秒数差
+        offset_seconds = time.mktime(local_dt) - time.mktime(utc_dt)
 
-        # Get the offset in hours and minutes
-        offset_hours = int(timezone_offset.total_seconds() // 3600)
-        offset_minutes = int((timezone_offset.total_seconds() % 3600) // 60)
+        # 转换为小时和分钟的差
+        offset_hours = int(offset_seconds // 3600)
+        offset_minutes = int((offset_seconds % 3600) // 60)
 
-        # Format the offset as a string
-        offset_string = f"{offset_hours:+03d}:{offset_minutes:02d}"
-
+        # 格式化为字符串，如"+08:00"
+        if offset_hours >= 0:
+            sign = "+"
+        else:
+            sign = "-"
+        offset_string = f"{sign}{abs(offset_hours):02d}:{abs(offset_minutes):02d}"
         # Get current time
         timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S") + offset_string
         self.struct = {
