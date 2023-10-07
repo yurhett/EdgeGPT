@@ -40,3 +40,4 @@ HEADERS_INIT_CONVER = {
     'x-ms-useragent': 'azsdk-js-api-client-factory/1.0.0-beta.1 core-rest-pipeline/1.10.3 OS/macOS',
 }
 
+BUNDLE_VERSION = "1.1055.8"

@@ -84,9 +84,13 @@ class ChatHub:
             for cookie in self.cookies:
                 cookies[cookie["name"]] = cookie["value"]
         self.aio_session = aiohttp.ClientSession(cookies=cookies)
+        wss_link = wss_link or "wss://sydney.bing.com/sydney/ChatHub",
+        if "sec_access_token" in self.request.struct:
+            wss_link = f"{wss_link}?sec_access_token={self.request.struct['sec_access_token']}"
+        wss_link = f"{wss_link}?"
         if self.proxy == None:
             wss = await self.aio_session.ws_connect(
-                wss_link or "wss://sydney.bing.com/sydney/ChatHub",
+                wss_link,
                 ssl=ssl_context,
                 headers=HEADERS,
                 proxy=self.proxy,
@@ -95,7 +99,7 @@ class ChatHub:
         else:
             # Check if websocket is closed
             wss = await self.aio_session.ws_connect(
-                wss_link or "wss://sydney.bing.com/sydney/ChatHub",
+                wss_link,
                 verify_ssl=False,
                 headers=HEADERS,
                 proxy=self.proxy,

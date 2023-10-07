@@ -4,7 +4,7 @@ from typing import List, Union
 
 import httpx
 
-from .constants import HEADERS_INIT_CONVER
+from .constants import HEADERS_INIT_CONVER, BUNDLE_VERSION
 from .exceptions import NotAllowedToAccess
 
 
@@ -43,10 +43,11 @@ class Conversation:
         if cookies:
             for cookie in cookies:
                 self.session.cookies.set(cookie["name"], cookie["value"])
+        request_url = os.environ.get("BING_PROXY_URL") or "https://edgeservices.bing.com/edgesvc/turing/conversation/create"
+        request_url = f"{request_url}?bundleVersion={BUNDLE_VERSION}"
         # Send GET request
         response = self.session.get(
-            url=os.environ.get("BING_PROXY_URL")
-            or "https://edgeservices.bing.com/edgesvc/turing/conversation/create",
+            url=request_url,
         )
         if response.status_code != 200:
             print(f"Status code: {response.status_code}")
@@ -106,9 +107,10 @@ class Conversation:
             verify=False,
         ) as client:
             # Send GET request
+            request_url = os.environ.get("BING_PROXY_URL") or "https://www.bing.com/turing/conversation/create"
+            request_url = f"{request_url}?bundleVersion={BUNDLE_VERSION}"
             response = await client.get(
-                url=os.environ.get("BING_PROXY_URL")
-                or "https://www.bing.com/turing/conversation/create",
+                url=request_url,
                 follow_redirects=True,
             )
         if response.status_code != 200:
