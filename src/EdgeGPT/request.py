@@ -14,7 +14,6 @@ from .utilities import guess_locale
 class ChatHubRequest:
     def __init__(
             self,
-            conversation_signature: str,
             client_id: str,
             conversation_id: str,
             invocation_id: int = 3,
@@ -22,7 +21,6 @@ class ChatHubRequest:
         self.struct: dict = {}
         self.client_id: str = client_id
         self.conversation_id: str = conversation_id
-        self.conversation_signature: str = conversation_signature
         self.invocation_id: int = invocation_id
 
     def update(

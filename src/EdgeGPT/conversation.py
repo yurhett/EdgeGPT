@@ -20,7 +20,7 @@ class Conversation:
         self.struct: dict = {
             "conversationId": None,
             "clientId": None,
-            "conversationSignature": None,
+            # "conversationSignature": None,
             "result": {"value": "Success", "message": None},
         }
         self.proxy = proxy

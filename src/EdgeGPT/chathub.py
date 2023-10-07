@@ -33,7 +33,6 @@ class ChatHub:
         self.loop: bool
         self.task: asyncio.Task
         self.request = ChatHubRequest(
-            conversation_signature=conversation.struct["conversationSignature"],
             client_id=conversation.struct["clientId"],
             conversation_id=conversation.struct["conversationId"],
         )
@@ -254,20 +253,15 @@ class ChatHub:
     async def delete_conversation(
             self,
             conversation_id: str = None,
-            conversation_signature: str = None,
             client_id: str = None,
     ) -> None:
         conversation_id = conversation_id or self.request.conversation_id
-        conversation_signature = (
-                conversation_signature or self.request.conversation_signature
-        )
         client_id = client_id or self.request.client_id
         url = "https://sydney.bing.com/sydney/DeleteSingleConversation"
         await self.session.post(
             url,
             json={
                 "conversationId": conversation_id,
-                "conversationSignature": conversation_signature,
                 "participant": {"id": client_id},
                 "source": "cib",
                 "optionsSets": ["autosave"],
