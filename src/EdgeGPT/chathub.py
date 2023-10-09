@@ -85,7 +85,7 @@ class ChatHub:
                 cookies[cookie["name"]] = cookie["value"]
         self.aio_session = aiohttp.ClientSession(cookies=cookies)
         wss_link = wss_link or "wss://sydney.bing.com/sydney/ChatHub"
-        wss_link = f"{wss_link}?sec_access_token={self.request.struct['sec_access_token']}"
+        wss_link = f"{wss_link}?sec_access_token={self.request.sec_access_token}"
         if self.proxy == None:
             wss = await self.aio_session.ws_connect(
                 wss_link,

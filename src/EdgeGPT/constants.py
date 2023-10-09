@@ -37,7 +37,7 @@ HEADERS_INIT_CONVER = {
     'sec-ch-ua-mobile': '?0',
     'sec-ch-ua-platform': '"macOS"',
     'x-ms-client-request-id': str(uuid.uuid4()),
-    'x-ms-useragent': 'azsdk-js-api-client-factory/1.0.0-beta.1 core-rest-pipeline/1.10.3 OS/macOS',
+    'x-ms-useragent': 'azsdk-js-api-client-factory/1.0.0-beta.1 core-rest-pipeline/1.12.0 OS/macOS',
 }
 
 BUNDLE_VERSION = "1.1055.8"
