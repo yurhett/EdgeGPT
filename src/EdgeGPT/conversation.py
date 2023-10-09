@@ -21,6 +21,7 @@ class Conversation:
             "conversationId": None,
             "clientId": None,
             # "conversationSignature": None,
+            "sec_access_token": None,
             "result": {"value": "Success", "message": None},
         }
         self.proxy = proxy
@@ -62,8 +63,10 @@ class Conversation:
             ) from exc
         if self.struct["result"]["value"] == "UnauthorizedRequest":
             raise NotAllowedToAccess(self.struct["result"]["message"])
-        if 'X-Sydney-Encryptedconversationsignature' in response.headers:
+        try:
             self.struct['sec_access_token'] = response.headers['X-Sydney-Encryptedconversationsignature']
+        except KeyError:
+            raise Exception("Authentication failed.")
 
     @staticmethod
     async def create(
@@ -74,7 +77,8 @@ class Conversation:
         self.struct = {
             "conversationId": None,
             "clientId": None,
-            "conversationSignature": None,
+            "sec_access_token": None,
+            # "conversationSignature": None,
             "result": {"value": "Success", "message": None},
         }
         self.proxy = proxy
@@ -126,4 +130,8 @@ class Conversation:
         if self.struct["result"]["value"] == "UnauthorizedRequest":
             print(self.struct)
             raise NotAllowedToAccess(self.struct["result"]["value"])
+        try:
+            self.struct['sec_access_token'] = response.headers['X-Sydney-Encryptedconversationsignature']
+        except KeyError:
+            raise Exception("Authentication failed.")
         return self
