@@ -3,6 +3,7 @@ import json
 import os
 import ssl
 import sys
+import urllib.parse
 from time import time
 from typing import Generator, List, Union
 
@@ -47,7 +48,7 @@ class ChatHub:
                 or os.environ.get("HTTPS_PROXY")
                 or None
         )
-        print(proxy)
+        # print(proxy)
         if proxy is not None and proxy.startswith("socks5h://"):
             proxy = "socks5://" + proxy[len("socks5h://"):]
         self.session = httpx.AsyncClient(
@@ -85,7 +86,7 @@ class ChatHub:
                 cookies[cookie["name"]] = cookie["value"]
         self.aio_session = aiohttp.ClientSession(cookies=cookies)
         wss_link = wss_link or "wss://sydney.bing.com/sydney/ChatHub"
-        wss_link = f"{wss_link}?sec_access_token={self.request.sec_access_token}"
+        wss_link = f"{wss_link}?sec_access_token={urllib.parse.quote_plus(self.request.sec_access_token)}"
         if self.proxy == None:
             wss = await self.aio_session.ws_connect(
                 wss_link,
