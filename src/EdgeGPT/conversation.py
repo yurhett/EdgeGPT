@@ -56,7 +56,6 @@ class Conversation:
             raise Exception("Authentication failed")
         try:
             self.struct = response.json()
-            print(self.struct)
         except (json.decoder.JSONDecodeError, NotAllowedToAccess) as exc:
             raise Exception(
                 "Authentication failed. You have not been accepted into the beta.",

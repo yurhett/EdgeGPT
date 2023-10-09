@@ -14,11 +14,13 @@ from .utilities import guess_locale
 class ChatHubRequest:
     def __init__(
             self,
+            sec_access_token: str,
             client_id: str,
             conversation_id: str,
             invocation_id: int = 3,
     ) -> None:
         self.struct: dict = {}
+        self.sec_access_token: str = sec_access_token
         self.client_id: str = client_id
         self.conversation_id: str = conversation_id
         self.invocation_id: int = invocation_id

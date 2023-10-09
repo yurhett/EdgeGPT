@@ -33,6 +33,7 @@ class ChatHub:
         self.loop: bool
         self.task: asyncio.Task
         self.request = ChatHubRequest(
+            sec_access_token=conversation.struct.get("sec_access_token"),
             client_id=conversation.struct["clientId"],
             conversation_id=conversation.struct["conversationId"],
         )
