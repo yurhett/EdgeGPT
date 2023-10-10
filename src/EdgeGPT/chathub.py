@@ -243,7 +243,8 @@ class ChatHub:
                 except Exception as e:
                     print(e)
                     print(response)
-                    continue
+                    raise Exception("No message found")
+                    # continue
 
     async def _initial_handshake(self, wss) -> None:
         await wss.send_str(append_identifier({"protocol": "json", "version": 1}))
